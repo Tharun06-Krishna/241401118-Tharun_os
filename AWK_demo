@@ -1,0 +1,168 @@
+@@ -0,0 +1,28 @@
+1	+
+#!/bin/bash
+2	+
+3	+
+# AWK Scripting Examples
+4	+
+5	+
+# Create data file if it doesn't exist
+6	+
+if [ ! -f data.txt ]; then
+7	+
+cat << EOF > data.txt
+8	+
+101 Alice HR 50000
+9	+
+102 Bob IT 60000
+10	+
+103 Charlie IT 75000
+11	+
+104 David Sales 45000
+12	+
+EOF
+13	+
+fi
+14	+
+15	+
+echo "--- All records ---"
+16	+
+awk '{print $0}' data.txt
+17	+
+18	+
+echo -e "\n--- Name and Salary ---"
+19	+
+awk '{print $2, $4}' data.txt
+20	+
+21	+
+echo -e "\n--- IT Department Employees ---"
+22	+
+awk '$3 == "IT" {print $2}' data.txt
+23	+
+24	+
+echo -e "\n--- Total Salary Expenditure ---"
+25	+
+awk '{sum += $4} END {print "Total: " sum}' data.txt
+26	+
+27	+
+echo -e "\n--- High earners (>50000) ---"
+28	+
+awk '$4 > 50000 {print $2, $4}' data.txt
+
+‎System_Calls/dir_ops.c‎
+
++23
+Lines changed: 23 additions & 0 deletions
+
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,23 @@
+1	+
+#include <stdio.h>
+2	+
+#include <dirent.h>
+3	+
+4	+
+int main() {
+5	+
+    struct dirent *de;  // Pointer for directory entry
+6	+
+7	+
+    // opendir() returns a pointer of DIR type. 
+8	+
+    DIR *dr = opendir(".");
+9	+
+10	+
+    if (dr == NULL) {
+11	+
+        printf("Could not open current directory\n");
+12	+
+        return 0;
+13	+
+    }
+14	+
+15	+
+    printf("Listing contents of current directory:\n");
+16	+
+    // readdir() returns a pointer to the next directory entry
+17	+
+    while ((de = readdir(dr)) != NULL) {
+18	+
+        printf("%s\n", de->d_name);
+19	+
+    }
+20	+
+21	+
+    closedir(dr);    
+22	+
+    return 0;
+23	+
+}
+
+‎System_Calls/dir_ops_output.png‎
+
+61.4 KB
+
+
+
+
+
+‎System_Calls/exec.c‎
+
++28
+Lines changed: 28 additions & 0 deletions
+
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,28 @@
+1	+
+#include <stdio.h>
+2	+
+#include <unistd.h>
+3	+
+#include <sys/wait.h>
+4	+
+5	+
+int main() {
+6	+
+    pid_t pid = fork();
+7	+
+8	+
+    if (pid < 0) {
+9	+
+        printf("Fork failed\n");
+10	+
+        return 1;
+11	+
+    } 
+12	+
+    else if (pid == 0) {
+13	+
+        // Child process
+14	+
+        printf("Child process executing 'ls' command using execvp...\n");
+15	+
+        char *args[] = {"ls", "-F", NULL};
+16	+
+        execvp(args[0], args);
+17	+
+        
+18	+
+        // If execvp returns, it failed
+19	+
+        printf("Exec failed\n");
+20	+
+    } 
+21	+
+    else {
+22	+
+        // Parent process
+23	+
+        wait(NULL);
+24	+
+        printf("\nChild process completed. Parent exiting.\n");
+25	+
+    }
+26	+
+27	+
+    return 0;
+28	+
+}
